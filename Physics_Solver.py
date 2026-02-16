@@ -53,7 +53,7 @@ def solve_motion_2_time(values):
 
 # looottts of topics
 TOPIC_LIBRARY = {
-    "Kinematics": [
+    "Motion of a moving object": [
         EquationDefinition(
             name="1st Equation of Motion (v = u + a*t)",
             variables={
@@ -115,7 +115,7 @@ TOPIC_LIBRARY = {
             },
         ),
     ],
-    "Forces and Materials": [
+    "Hookes Law and Moments": [
         EquationDefinition(
             name="Density (rho = m / V)",
             variables={
