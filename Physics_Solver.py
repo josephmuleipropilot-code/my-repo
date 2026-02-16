@@ -24,7 +24,7 @@ def asin_deg(value):
 
 def sqrt_checked(value, label):
     if value < 0:
-        raise ValueError(f"Cannot solve {label}: square-root input became negative.")
+        raise ValueError(f"Cannot solve {label}: square-root input is a negative.")
     return math.sqrt(value)
 
 
@@ -582,9 +582,8 @@ def run_solver():
         try:
             solved_variable, solved_value = solve_missing_variable(equation, known_values)
             print()
-            print("Solved successfully:")
+            print("Solved successfully!!:")
             print(f"  {solved_variable} = {solved_value}")
-            print(f"  Meaning: {equation.variables[solved_variable]}")
         except ZeroDivisionError:
             print()
             print("Could not solve: division by zero occurred.")
@@ -599,3 +598,4 @@ def run_solver():
 
 if __name__ == "__main__":
     run_solver()
+
