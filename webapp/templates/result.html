@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Result - Physics Solver</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="container show-result" id="result-container">
+      <h1>Result</h1>
+      {% if error %}
+        <div class="error">Error: {{ error }}</div>
+      {% else %}
+        <div class="result">Solved: <strong>{{ solved_var }}</strong> = <code>{{ solved_value }}</code></div>
+      {% endif %}
+      <p><a href="/">Back</a></p>
+    </div>
+    <script>
+      // animate result card into view
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => document.getElementById('result-container').classList.add('is-loaded'), 40);
+      });
+    </script>
+  </body>
+</html>

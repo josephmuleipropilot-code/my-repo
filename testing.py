@@ -9,4 +9,5 @@ def my_decorator(func):
 def add(a, b):
     return a + b
 
-add(3, 4)
+e = add(3, 4)
+print(e)

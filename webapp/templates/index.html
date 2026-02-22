@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Physics Solver</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="container" id="app-container">
+      <h1>Physics Equation Solver</h1>
+      <form id="solver-form" method="post" action="/solve" novalidate>
+        <div class="row" data-index="0">
+          <label for="topic">Topic</label>
+          <select id="topic" name="topic"></select>
+        </div>
+        <div class="row" data-index="1">
+          <label for="equation">Equation</label>
+          <select id="equation" name="equation_index"></select>
+        </div>
+        <div id="variables" data-index="2"></div>
+        <div class="row actions" data-index="3">
+          <button type="submit">Solve</button>
+          <button type="button" id="reset">Reset</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const TOPICS = {{ topics | tojson }};
+
+      const topicSelect = document.getElementById('topic');
+      const equationSelect = document.getElementById('equation');
+      const varsDiv = document.getElementById('variables');
+      const resetBtn = document.getElementById('reset');
+
+      function populateTopics() {
+        Object.keys(TOPICS).forEach((topic, idx) => {
+          const opt = document.createElement('option');
+          opt.value = topic;
+          opt.textContent = topic;
+          topicSelect.appendChild(opt);
+        });
+        topicSelect.selectedIndex = 0;
+        populateEquations();
+      }
+
+      function populateEquations() {
+        const topic = topicSelect.value;
+        equationSelect.innerHTML = '';
+        const equations = TOPICS[topic];
+        equations.forEach((eq, idx) => {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = eq.name;
+          equationSelect.appendChild(opt);
+        });
+        equationSelect.selectedIndex = 0;
+        renderVariables();
+      }
+
+      function renderVariables() {
+        // Clear variables container but keep form-level hidden field stable
+        varsDiv.innerHTML = '';
+        const topic = topicSelect.value;
+        const eq = TOPICS[topic][equationSelect.value];
+        const vars = eq.variables;
+
+        const info = document.createElement('p');
+        info.className = 'hint';
+        info.textContent = 'Leave exactly one field empty; the solver will find it.';
+        varsDiv.appendChild(info);
+
+        let i = 0;
+        Object.entries(vars).forEach(([key, desc]) => {
+          const row = document.createElement('div');
+          row.className = 'row';
+          row.setAttribute('data-index', i);
+          row.style.setProperty('--i', i);
+
+          const label = document.createElement('label');
+          label.htmlFor = 'var_' + key;
+          label.textContent = key + ' (' + desc + ')';
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.name = 'var_' + key;
+          input.id = 'var_' + key;
+          input.placeholder = 'Enter number or leave blank';
+
+          row.appendChild(label);
+          row.appendChild(input);
+          varsDiv.appendChild(row);
+          i += 1;
+        });
+
+        // keep a single hidden field for the equation index and update its value
+        let eqIndexHidden = document.getElementById('equation_index_hidden');
+        if (!eqIndexHidden) {
+          eqIndexHidden = document.createElement('input');
+          eqIndexHidden.type = 'hidden';
+          eqIndexHidden.name = 'equation_index';
+          eqIndexHidden.id = 'equation_index_hidden';
+          document.getElementById('solver-form').appendChild(eqIndexHidden);
+        }
+        eqIndexHidden.value = equationSelect.value;
+      }
+
+      // keep hidden field in sync
+      equationSelect.addEventListener('change', () => {
+        const hidden = document.getElementById('equation_index_hidden');
+        if (hidden) hidden.value = equationSelect.value;
+        renderVariables();
+      });
+
+      topicSelect.addEventListener('change', populateEquations);
+
+      resetBtn.addEventListener('click', () => {
+        document.getElementById('solver-form').reset();
+        renderVariables();
+      });
+
+      // on load, populate and animate UI
+      populateTopics();
+      document.addEventListener('DOMContentLoaded', () => {
+        // slight timeout so CSS transitions run after insertion
+        setTimeout(() => document.getElementById('app-container').classList.add('is-loaded'), 60);
+      });
+    </script>
+  </body>
+</html>
